@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Subscription Dashboard</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <div>
+          <h1>Subscriptions</h1>
+          <p class="muted">Saved locally on this device. Quick actions: open billing, open cancellation, edit, delete.</p>
+        </div>
+      </header>
+
+      <section class="controls card">
+        <input id="q" type="text" placeholder="Search (service, domain, notes)" />
+        <select id="filterCategory">
+          <option value="">All categories</option>
+          <option>Streaming</option>
+          <option>SaaS</option>
+          <option>Gaming</option>
+          <option>Music</option>
+          <option>Education</option>
+          <option>Fitness</option>
+          <option>News</option>
+          <option>Other</option>
+        </select>
+        <select id="filterWindow">
+          <option value="">All renewals</option>
+          <option value="7">Renewing in 7 days</option>
+          <option value="14">Renewing in 14 days</option>
+          <option value="30">Renewing in 30 days</option>
+        </select>
+        <select id="sortBy">
+          <option value="renewalSoon">Sort: Renewal soonest</option>
+          <option value="newest">Sort: Newest</option>
+        </select>
+      </section>
+
+      <section class="card" id="upcomingBox">
+        <h2>Upcoming renewals</h2>
+        <div id="upcomingList" class="grid"></div>
+      </section>
+
+      <section class="card">
+        <h2>All saved</h2>
+        <div id="emptyState" class="empty">
+          <div class="emptyTitle">No subscriptions yet</div>
+          <div class="muted">
+            1) Open a billing/subscription page → click the extension<br/>
+            2) Press “Save subscription”<br/>
+            3) Manage reminders here
+          </div>
+        </div>
+        <div id="list" class="grid"></div>
+      </section>
+
+      <dialog id="editDialog">
+        <form method="dialog" class="dialog">
+          <h3>Edit subscription</h3>
+          <div class="form">
+            <label>Service name <input id="eName" type="text" /></label>
+            <label>Renewal date <input id="eRenewal" type="date" /></label>
+            <label>Category
+              <select id="eCategory">
+                <option value="">—</option>
+                <option>Streaming</option>
+                <option>SaaS</option>
+                <option>Gaming</option>
+                <option>Music</option>
+                <option>Education</option>
+                <option>Fitness</option>
+                <option>News</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>Price text <input id="ePrice" type="text" placeholder="e.g., $9.99/mo" /></label>
+            <label>Notes <textarea id="eNotes" rows="3"></textarea></label>
+          </div>
+          <div class="dialogActions">
+            <button id="btnCancelEdit" value="cancel">Cancel</button>
+            <button id="btnSaveEdit" class="primary" value="save">Save</button>
+          </div>
+        </form>
+      </dialog>
+
+      <footer class="foot muted">
+        Not affiliated with any service. “Open cancellation” opens known account/cancel pages when available.
+      </footer>
+    </div>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

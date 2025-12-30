@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Subscription Cancellation Assistant</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="title">Subscription Cancellation Assistant</div>
+        <div id="statusBadge" class="badge neutral">Scanning…</div>
+      </header>
+
+      <section class="card">
+        <div class="row">
+          <div class="label">Service</div>
+          <div id="serviceName" class="value">—</div>
+        </div>
+        <div class="row">
+          <div class="label">Domain</div>
+          <div id="domain" class="value">—</div>
+        </div>
+        <div class="row">
+          <div class="label">Page</div>
+          <div id="pageType" class="value">—</div>
+        </div>
+        <div class="row">
+          <div class="label">Confidence</div>
+          <div id="confidence" class="value">—</div>
+        </div>
+
+        <div class="actions">
+          <button id="btnSave" class="primary">Save subscription</button>
+          <button id="btnCancel" class="secondary" disabled>Open cancellation</button>
+          <button id="btnOptions" class="ghost">Open dashboard</button>
+        </div>
+
+        <div class="hint" id="hintBox"></div>
+      </section>
+
+      <section class="card">
+        <div class="subtitle">Quick add (optional)</div>
+        <div class="form">
+          <label>
+            Renewal date
+            <input id="renewalDate" type="date" />
+          </label>
+          <label>
+            Category
+            <select id="category">
+              <option value="">—</option>
+              <option>Streaming</option>
+              <option>SaaS</option>
+              <option>Gaming</option>
+              <option>Music</option>
+              <option>Education</option>
+              <option>Fitness</option>
+              <option>News</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>
+            Notes
+            <input id="notes" type="text" placeholder="e.g., Annual plan, cancel after trial" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="btnSaveAnyway" class="secondary">Save this site anyway</button>
+        </div>
+        <div class="tiny">
+          Data stays on your device (chrome.storage). No email access. No payment data.
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
