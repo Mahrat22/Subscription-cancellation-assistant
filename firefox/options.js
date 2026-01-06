@@ -1,5 +1,5 @@
 // options.js
-import { storageGet, storageSet, daysFromNow, getBaseDomain, safeText } from "./utils.js";
+import { storageGet, storageSet, daysFromNow, safeText } from "./utils.js";
 
 const key = "subs_v1";
 
@@ -60,8 +60,14 @@ function matchesFilters(item) {
 
   if (q) {
     const hay = [
-      item.serviceName, item.baseDomain, item.notes, item.category, item.priceText
-    ].join(" ").toLowerCase();
+      item.serviceName,
+      item.baseDomain,
+      item.notes,
+      item.category,
+      item.priceText
+    ]
+      .join(" ")
+      .toLowerCase();
     if (!hay.includes(q)) return false;
   }
 
@@ -98,48 +104,70 @@ function sortItems(list) {
     if (!aHas && bHas) return 1;
     return (b.createdAt || 0) - (a.createdAt || 0);
   });
+
   return copy;
+}
+
+function makeBadge(text) {
+  const b = document.createElement("span");
+  b.className = "badge";
+  b.textContent = safeText(text);
+  return b;
 }
 
 function itemCard(item) {
   const days = daysFromNow(item.renewalDate);
   const renewalLabel =
-    item.renewalDate ? (days === null ? item.renewalDate : `${item.renewalDate} (${days}d)`) : "—";
+    item.renewalDate
+      ? (days === null ? item.renewalDate : `${item.renewalDate} (${days}d)`)
+      : "—";
 
   const entry = findCancelLink(item.baseDomain);
 
   const el = document.createElement("div");
   el.className = "item";
 
-  el.innerHTML = `
-    <div class="itemTop">
-      <div>
-        <div class="itemTitle">${escapeHtml(item.serviceName || item.baseDomain)}</div>
-        <div class="itemMeta">
-          ${escapeHtml(item.baseDomain || "—")} · Renewal: ${escapeHtml(renewalLabel)}
-        </div>
-      </div>
-      <div class="badges">
-        ${item.category ? `<span class="badge">${escapeHtml(item.category)}</span>` : ""}
-        ${item.detectedPageType ? `<span class="badge">${escapeHtml(item.detectedPageType)}</span>` : ""}
-      </div>
-    </div>
+  // Top area
+  const top = document.createElement("div");
+  top.className = "itemTop";
 
-    <div class="actions">
-      <button class="openBilling">Open billing</button>
-      <button class="openCancel">${entry?.cancelUrl ? "Open cancellation" : "Find cancellation"}</button>
-      <button class="ghost edit">Edit</button>
-      <button class="danger del">Delete</button>
-    </div>
+  const left = document.createElement("div");
 
-    ${item.notes ? `<div class="itemMeta" style="margin-top:8px;">Notes: ${escapeHtml(item.notes)}</div>` : ""}
-  `;
+  const title = document.createElement("div");
+  title.className = "itemTitle";
+  title.textContent = safeText(item.serviceName || item.baseDomain || "—");
 
-  el.querySelector(".openBilling").addEventListener("click", () => {
+  const meta = document.createElement("div");
+  meta.className = "itemMeta";
+  meta.textContent = `${safeText(item.baseDomain || "—")} · Renewal: ${safeText(renewalLabel)}`;
+
+  left.appendChild(title);
+  left.appendChild(meta);
+
+  const badges = document.createElement("div");
+  badges.className = "badges";
+
+  if (item.category) badges.appendChild(makeBadge(item.category));
+  if (item.detectedPageType) badges.appendChild(makeBadge(item.detectedPageType));
+
+  top.appendChild(left);
+  top.appendChild(badges);
+
+  // Actions
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+  const btnBilling = document.createElement("button");
+  btnBilling.className = "openBilling";
+  btnBilling.textContent = "Open billing";
+  btnBilling.addEventListener("click", () => {
     if (item.currentUrl) chrome.tabs.create({ url: item.currentUrl });
   });
 
-  el.querySelector(".openCancel").addEventListener("click", () => {
+  const btnCancel = document.createElement("button");
+  btnCancel.className = "openCancel";
+  btnCancel.textContent = entry?.cancelUrl ? "Open cancellation" : "Find cancellation";
+  btnCancel.addEventListener("click", () => {
     if (entry?.cancelUrl) {
       chrome.tabs.create({ url: entry.cancelUrl });
     } else {
@@ -148,19 +176,33 @@ function itemCard(item) {
     }
   });
 
-  el.querySelector(".edit").addEventListener("click", () => openEdit(item.id));
-  el.querySelector(".del").addEventListener("click", () => remove(item.id));
+  const btnEdit = document.createElement("button");
+  btnEdit.className = "ghost edit";
+  btnEdit.textContent = "Edit";
+  btnEdit.addEventListener("click", () => openEdit(item.id));
+
+  const btnDel = document.createElement("button");
+  btnDel.className = "danger del";
+  btnDel.textContent = "Delete";
+  btnDel.addEventListener("click", () => remove(item.id));
+
+  actions.appendChild(btnBilling);
+  actions.appendChild(btnCancel);
+  actions.appendChild(btnEdit);
+  actions.appendChild(btnDel);
+
+  el.appendChild(top);
+  el.appendChild(actions);
+
+  if (item.notes) {
+    const notes = document.createElement("div");
+    notes.className = "itemMeta";
+    notes.style.marginTop = "8px";
+    notes.textContent = `Notes: ${safeText(item.notes)}`;
+    el.appendChild(notes);
+  }
 
   return el;
-}
-
-function escapeHtml(str) {
-  return safeText(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }
 
 async function remove(id) {
@@ -180,7 +222,9 @@ function upcomingWithin(days) {
 
 function renderUpcoming() {
   const upcoming = upcomingWithin(30);
-  els.upcomingList.innerHTML = "";
+
+  // clear safely (no innerHTML)
+  els.upcomingList.replaceChildren();
 
   if (upcoming.length === 0) {
     els.upcomingBox.style.display = "none";
@@ -197,7 +241,7 @@ function renderList() {
   const filtered = all.filter(matchesFilters);
   const sorted = sortItems(filtered);
 
-  els.list.innerHTML = "";
+  els.list.replaceChildren();
   els.emptyState.style.display = all.length === 0 ? "block" : "none";
 
   for (const item of sorted) {
@@ -247,10 +291,17 @@ function bind() {
   els.filterWindow.addEventListener("change", rerender);
   els.sortBy.addEventListener("change", rerender);
 
-  els.btnSaveEdit.addEventListener("click", async (e) => {
+  els.btnSaveEdit.addEventListener("click", async () => {
     // dialog closes automatically because method="dialog"
     await applyEdit();
   });
+
+  // Optional: if you have a Cancel button that should just close dialog
+  if (els.btnCancelEdit) {
+    els.btnCancelEdit.addEventListener("click", () => {
+      // method="dialog" handles close, no-op is fine
+    });
+  }
 }
 
 (async function init() {
