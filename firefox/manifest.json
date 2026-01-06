@@ -3,18 +3,29 @@
   "name": "Subscription Cancellation Assistant",
   "version": "1.0.0",
   "description": "Save and track online subscriptions and quickly open known cancellation pages. All data stays on your device.",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "subscription-cancellation-assistant@nordicdevlabs"
+    }
+  },
+
   "action": {
     "default_title": "Subscription Cancellation Assistant",
     "default_popup": "popup.html"
   },
+
   "icons": {
     "16": "assets/icons/icon16.png",
     "48": "assets/icons/icon48.png",
     "128": "assets/icons/icon128.png"
   },
+
   "permissions": ["storage", "activeTab", "scripting"],
+
   "background": {
-  "scripts": ["background.js"]
-},
+    "scripts": ["background.js"]
+  },
+
   "options_page": "options.html"
 }
