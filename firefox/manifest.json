@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Subscription Cancellation Assistant",
+  "version": "1.0.0",
+  "description": "Save and track online subscriptions and quickly open known cancellation pages. All data stays on your device.",
+  "action": {
+    "default_title": "Subscription Cancellation Assistant",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html"
+}
