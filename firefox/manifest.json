@@ -6,7 +6,11 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "subscription-cancellation-assistant@nordicdevlabs"
+      "id": "subscription-cancellation-assistant@nordicdevlabs",
+      "data_collection_permissions": {
+        "required": [],
+        "optional": []
+      }
     }
   },
 
@@ -21,7 +25,11 @@
     "128": "assets/icons/icon128.png"
   },
 
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
 
   "background": {
     "scripts": ["background.js"]
